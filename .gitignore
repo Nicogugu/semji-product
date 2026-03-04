@@ -1,8 +1,8 @@
 # Harvestr MCP local clone
 .harvestr-mcp/
 
-# Screenshots de travail (données projet, pas plugin)
-semji-screenshots/
+# Screenshots de travail (racine uniquement, pas ceux du plugin)
+/semji-screenshots/
 
 # Secrets - contient des API keys
 .mcp.json
