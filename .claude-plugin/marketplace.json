@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "semji-product",
-      "source": ".",
+      "source": "./plugins/semji-product",
       "description": "Skills PM Semji : feedbacks (Harvestr), PRD/EPIC (Notion), issues dev-ready, wireframes (Gemini)",
       "version": "1.0.0"
     }
