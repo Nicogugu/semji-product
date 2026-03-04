@@ -31,5 +31,11 @@
         "GEMINI_API_KEY": "<your-gemini-api-key>"
       }
     }
+  },
+  "gitlab": {
+    "_comment": "Token GitLab pour p.gitlab — variable d'env GITLAB_TOKEN",
+    "env": {
+      "GITLAB_TOKEN": "<your-gitlab-personal-access-token>"
+    }
   }
 }
