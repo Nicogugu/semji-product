@@ -1,0 +1,14 @@
+{
+  "name": "semji-tools",
+  "owner": {
+    "name": "Semji Product Team"
+  },
+  "plugins": [
+    {
+      "name": "semji-product",
+      "source": ".",
+      "description": "Skills PM Semji : feedbacks (Harvestr), PRD/EPIC (Notion), issues dev-ready, wireframes (Gemini)",
+      "version": "1.0.0"
+    }
+  ]
+}
