@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "harvestr": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        ".harvestr-mcp",
+        "fastmcp",
+        "run",
+        "src/harvestr_mcp/server.py:mcp"
+      ],
+      "env": {
+        "HARVESTR_API_TOKEN": "<your-harvestr-token>"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@anthropic/slack-mcp@latest"
+      ],
+      "env": {}
+    },
+    "nanobanana": {
+      "command": "uvx",
+      "args": [
+        "nanobanana-mcp-server@latest"
+      ],
+      "env": {
+        "GEMINI_API_KEY": "<your-gemini-api-key>"
+      }
+    }
+  }
+}
