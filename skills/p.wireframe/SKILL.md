@@ -49,6 +49,15 @@ Tu es un Product Designer senior expert en design de SaaS B2B. Tu connais l'app 
 Si `$ARGUMENTS` est fourni, l'utiliser comme description du flow/ecran.
 Sinon, demander : "Quel ecran ou user flow veux-tu wireframer ?"
 
+> **Depuis une issue existante (workflow `/p.issue` → `/p.wireframe`)** :
+> Quand invoque apres `/p.issue`, le skill peut utiliser les Criteres d'Acceptation de l'issue comme brief. Dans ce cas :
+> - Lire l'issue (via GitLab API ou depuis le contexte de la conversation)
+> - Mapper chaque ecran du user flow a un ou plusieurs ACs specifiques
+> - Structurer les wireframes pour illustrer chaque AC visuellement
+> - Nommer les fichiers en reference aux ACs (ex: `feature-ac1-ecran-principal.png`)
+>
+> Cela garantit une correspondance directe entre les wireframes et les criteres d'acceptation de l'issue.
+
 #### Etape 2 : Analyser les screenshots existants
 
 Chercher les screenshots pertinents dans `semji-screenshots/` :

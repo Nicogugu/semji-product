@@ -49,19 +49,20 @@ Tu es un Product Designer senior expert en design de SaaS B2B. Tu connais l'app 
 Si `$ARGUMENTS` est fourni, l'utiliser comme description du flow/ecran.
 Sinon, demander : "Quel ecran ou user flow veux-tu wireframer ?"
 
+> **Depuis une issue existante (workflow `/p.issue` → `/p.wireframe`)** :
+> Quand invoque apres `/p.issue`, le skill peut utiliser les Criteres d'Acceptation de l'issue comme brief. Dans ce cas :
+> - Lire l'issue (via GitLab API ou depuis le contexte de la conversation)
+> - Mapper chaque ecran du user flow a un ou plusieurs ACs specifiques
+> - Structurer les wireframes pour illustrer chaque AC visuellement
+> - Nommer les fichiers en reference aux ACs (ex: `feature-ac1-ecran-principal.png`)
+>
+> Cela garantit une correspondance directe entre les wireframes et les criteres d'acceptation de l'issue.
+
 #### Etape 2 : Analyser les screenshots existants
 
-Chercher les screenshots pertinents. Deux emplacements possibles :
-1. **Projet local** : `semji-screenshots/` dans le CWD (si l'utilisateur a ajoute des screenshots)
-2. **Plugin** : `semji-screenshots/` dans ce dossier plugin (screenshots de base inclus)
-
+Chercher les screenshots pertinents dans `semji-screenshots/` :
 ```
 Glob: semji-screenshots/**/*.png
-```
-
-Si le dossier `semji-screenshots/` n'existe pas dans le CWD, le creer et y copier les screenshots de base depuis le plugin :
-```bash
-mkdir -p semji-screenshots && cp <chemin-plugin>/semji-screenshots/*.png semji-screenshots/
 ```
 
 Lire les screenshots pertinents avec `Read` pour comprendre :
@@ -69,8 +70,6 @@ Lire les screenshots pertinents avec `Read` pour comprendre :
 - Les composants utilises (table, filtres, modales, etc.)
 - Le contexte fonctionnel (quelles donnees, quelles actions)
 - La navigation (ou se situe l'ecran dans l'app)
-
-**Screenshots de base inclus** : `content-hub-editeur.png`, `content-hub-planning.png`, `intel-hub-geo-prompts.png`, `ai-hub-agent-config.png`
 
 #### Etape 3 : Consulter le product context
 

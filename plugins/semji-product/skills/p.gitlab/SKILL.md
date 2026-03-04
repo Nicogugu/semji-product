@@ -1,6 +1,6 @@
 ---
 name: p.gitlab
-description: Gere les issues GitLab Semji via API REST. Utiliser quand on parle de creer une issue gitlab, lire, modifier, rechercher des issues, ou interagir avec le backlog GitLab.
+description: Gere les issues GitLab Semji via API REST. Utiliser quand on parle de creer une issue gitlab, lire, modifier, rechercher des issues, uploader des images, ou interagir avec le backlog GitLab.
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Bash, Read, Grep, AskUserQuestion
@@ -34,6 +34,7 @@ Analyser `$ARGUMENTS` pour identifier l'intention :
 | "lire", "voir", "afficher", "#1234" | → **LIRE** |
 | "modifier", "update", "changer", "assigner" | → **MODIFIER** |
 | "chercher", "rechercher", "lister", "trouver" | → **RECHERCHER** |
+| "image", "upload", "wireframe", "screenshot", "ajouter image" | → **AJOUTER DES IMAGES** |
 
 Si ambigue, utiliser **AskUserQuestion** :
 ```
@@ -228,6 +229,63 @@ Presenter sous forme de tableau :
 ```
 
 Si plus de 20 resultats, indiquer le total et proposer de paginer.
+
+---
+
+## AJOUTER DES IMAGES a une issue
+
+Workflow en 2 etapes pour uploader des images (wireframes, screenshots, schemas) et les integrer dans la description d'une issue existante.
+
+### Etape 1 : Uploader les images
+
+Pour chaque image a ajouter, utiliser l'endpoint upload :
+
+```bash
+curl -s --header "PRIVATE-TOKEN: $TOKEN" \
+  --form "file=@chemin/vers/image.png" \
+  "https://gitlab.rvip.fr/api/v4/projects/221/uploads"
+```
+
+La reponse contient la reference Markdown a conserver :
+```json
+{
+  "alt": "image",
+  "url": "/uploads/HASH/image.png",
+  "full_path": "/semji/semji/uploads/HASH/image.png",
+  "markdown": "![image](/uploads/HASH/image.png)"
+}
+```
+
+**Collecter toutes les references `markdown`** de chaque upload avant de passer a l'etape 2.
+
+> **Astuce** : Uploader plusieurs images en boucle bash :
+> ```bash
+> for img in wireframe-step1.png wireframe-step2.png; do
+>   curl -s --header "PRIVATE-TOKEN: $TOKEN" \
+>     --form "file=@$img" \
+>     "https://gitlab.rvip.fr/api/v4/projects/221/uploads"
+> done
+> ```
+
+### Etape 2 : Mettre a jour la description de l'issue
+
+Construire la nouvelle description en integrant les references Markdown des images, puis mettre a jour l'issue :
+
+```bash
+curl -s --request PUT \
+  --header "PRIVATE-TOKEN: $TOKEN" \
+  --header "Content-Type: application/json" \
+  --data @description.json \
+  "https://gitlab.rvip.fr/api/v4/projects/221/issues/IID"
+```
+
+> **Astuce : fichier JSON temporaire** — Pour les descriptions longues contenant du Markdown avec des backticks, retours a la ligne, et caracteres speciaux, ecrire le JSON dans un fichier temporaire (`description.json`) puis le passer avec `--data @fichier.json`. Cela evite tous les problemes d'echappement bash. Penser a supprimer le fichier apres.
+
+### Regles
+- **Uploader AVANT de modifier** : Toujours uploader toutes les images d'abord, puis faire un seul PUT pour la description
+- **Nommage** : Utiliser des noms descriptifs (pas `image1.png` mais `webhook-step1-dropdown.png`)
+- **Ordre** : Inserer les images dans l'ordre logique du user flow
+- **Sections** : Grouper les wireframes sous un heading `### Wireframes du flow` dans la section Design & UX
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "name": "semji-product",
-  "version": "1.0.0",
-  "description": "Skills Product Management Semji : feedback collection (Harvestr), PRD/EPIC generation (Notion), issue creation, wireframe generation (Gemini)",
+  "version": "1.1.0",
+  "description": "Skills Product Management Semji : feedback collection (Harvestr), PRD/EPIC generation (Notion), issue creation (PRD ou description libre), wireframe generation (Gemini), GitLab management (issues + images)",
   "author": {
     "name": "Semji Product Team"
   },

@@ -1,15 +1,15 @@
 ---
 name: p.issue
-description: Transforme une User Story d'un PRD/EPIC Semji en Issue Markdown complete au format standard Semji. Utiliser quand on parle de creer une issue, un ticket, une US, ou transformer une user story en ticket dev.
+description: Transforme une User Story (d'un PRD/EPIC ou d'une description libre) en Issue Markdown complete au format standard Semji. Utiliser quand on parle de creer une issue, un ticket, une US, ou transformer une user story en ticket dev.
 disable-model-invocation: false
 user-invocable: true
 allowed-tools: Read, Glob, Grep, WebFetch
-argument-hint: [lien-notion-du-prd OU nom-de-la-user-story]
+argument-hint: [lien-notion-du-prd OU nom-de-la-user-story OU description-libre-de-la-feature]
 ---
 
-# Generateur d'Issue Semji (depuis un PRD)
+# Generateur d'Issue Semji
 
-Tu es un assistant Product Management expert. Ton role est d'aider un PM a transformer une User Story existante (issue d'un PRD/EPIC genere par `/p.prd`) en une Issue dev-ready complete au format standard Semji.
+Tu es un assistant Product Management expert. Ton role est d'aider un PM a transformer une User Story — issue d'un PRD, ou description libre d'une feature — en une Issue dev-ready complete au format standard Semji.
 
 ## Processus en 3 phases
 
@@ -17,20 +17,35 @@ Tu es un assistant Product Management expert. Ton role est d'aider un PM a trans
 
 ### PHASE 1 : Identification de la User Story source
 
-#### Etape 1 : Localiser le PRD
+#### Etape 1 : Localiser la source
 
 Si `$ARGUMENTS` contient un lien Notion :
 - Utiliser `notion-fetch` pour recuperer le contenu du PRD
 - Parser et lister toutes les User Stories trouvees
+- → Continuer a l'Etape 2 (selection de la US)
 
 Si `$ARGUMENTS` contient un nom de User Story :
 - Demander le lien Notion du PRD source
 - Puis chercher la US correspondante
+- → Continuer a l'Etape 2 (selection de la US)
+
+Si `$ARGUMENTS` contient une description libre de feature (ni lien Notion, ni nom de US connu, ni vide) :
+- **Mode direct** : pas de PRD a consulter
+- Extraire directement depuis la description :
+  - Le **titre** (deduire un titre concis de la feature)
+  - Le **persona** (En tant que...)
+  - L'**action** (Je veux...)
+  - Le **benefice** (Afin de...)
+  - Les **Criteres d'Acceptation** (deduire des ACs depuis la description)
+- Si le trio persona/action/benefice ou les ACs ne sont pas explicites dans la description, les inferer du contexte ou demander en texte libre
+- → Sauter l'Etape 2, passer directement a la PHASE 2
 
 Si `$ARGUMENTS` est vide :
-- Demander au PM : "Quel PRD contient la User Story ? (colle le lien Notion)"
+- Demander au PM : "Quel PRD contient la User Story ? (colle le lien Notion, ou decris directement la feature)"
 
 #### Etape 2 : Selectionner la User Story
+
+> **Note** : Cette etape est sautee en **mode direct** (description libre sans PRD). Dans ce cas, les infos sont extraites directement de la description a l'Etape 1.
 
 Une fois le PRD recupere :
 1. Lister TOUTES les User Stories trouvees avec leur numero et titre
@@ -56,9 +71,9 @@ Options : [liste des US trouvees]
 
 Les PRDs contiennent une base, mais une Issue dev-ready necessite plus de details. Cette phase utilise **1 seul appel AskUserQuestion** (max 4 questions) pour collecter tout ce qui manque.
 
-#### Avant de poser les questions : analyser le PRD
+#### Avant de poser les questions : analyser la source
 
-Parcours la US selectionnee ET les sections techniques du PRD. Identifie ce qui est **deja disponible** vs **manquant** :
+Parcours la US selectionnee (ou la description libre en mode direct) ET les sections techniques du PRD (si disponible). Identifie ce qui est **deja disponible** vs **manquant** :
 - Lien Figma specifique a cette US ?
 - Etats UX (chargement, erreur, empty, succes) decrits ?
 - Logique metier / formules detaillees ?
@@ -166,9 +181,12 @@ Une fois validee par le PM :
 
 ## Regles AskUserQuestion
 
-Exactement **2 appels AskUserQuestion** dans tout le flow :
+**Depuis un PRD** : Exactement **2 appels AskUserQuestion** dans tout le flow :
 1. **AskUserQuestion #1** (Phase 1) : Selection de la User Story parmi celles du PRD
 2. **AskUserQuestion #2** (Phase 2) : Enrichissement — max 4 questions (Figma, Etats UX, Specs, Sections optionnelles). Ne poser que celles dont la reponse manque dans le PRD.
+
+**En mode direct** (description libre) : **1 seul appel AskUserQuestion** :
+1. **AskUserQuestion #1** (Phase 2) : Enrichissement — max 4 questions. La selection de US est sautee car il n'y a pas de PRD.
 
 **NE PAS utiliser AskUserQuestion pour :**
 - Demander le lien Notion du PRD (texte libre)
@@ -190,3 +208,10 @@ Cette skill est conçue pour etre utilisee APRES `/p.prd`. Le workflow type :
 1. `/p.prd` → genere le PRD complet sur Notion
 2. `/p.issue [lien-notion-du-prd]` → transforme chaque US en ticket dev-ready
 3. Repeter `/p.issue` pour chaque US a transformer
+
+### Utilisation standalone (sans PRD)
+
+Cette skill peut aussi etre utilisee SANS PRD prealable :
+1. `/p.issue [description libre de la feature]` → genere une issue directement depuis la description
+2. Le skill extrait le persona/action/benefice et les ACs depuis la description
+3. Phase 2 (enrichissement) et Phase 3 (generation) se deroulent normalement
