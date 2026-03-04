@@ -51,9 +51,17 @@ Sinon, demander : "Quel ecran ou user flow veux-tu wireframer ?"
 
 #### Etape 2 : Analyser les screenshots existants
 
-Chercher les screenshots pertinents dans `semji-screenshots/` :
+Chercher les screenshots pertinents. Deux emplacements possibles :
+1. **Projet local** : `semji-screenshots/` dans le CWD (si l'utilisateur a ajoute des screenshots)
+2. **Plugin** : `semji-screenshots/` dans ce dossier plugin (screenshots de base inclus)
+
 ```
 Glob: semji-screenshots/**/*.png
+```
+
+Si le dossier `semji-screenshots/` n'existe pas dans le CWD, le creer et y copier les screenshots de base depuis le plugin :
+```bash
+mkdir -p semji-screenshots && cp <chemin-plugin>/semji-screenshots/*.png semji-screenshots/
 ```
 
 Lire les screenshots pertinents avec `Read` pour comprendre :
@@ -61,6 +69,8 @@ Lire les screenshots pertinents avec `Read` pour comprendre :
 - Les composants utilises (table, filtres, modales, etc.)
 - Le contexte fonctionnel (quelles donnees, quelles actions)
 - La navigation (ou se situe l'ecran dans l'app)
+
+**Screenshots de base inclus** : `content-hub-editeur.png`, `content-hub-planning.png`, `intel-hub-geo-prompts.png`, `ai-hub-agent-config.png`
 
 #### Etape 3 : Consulter le product context
 
