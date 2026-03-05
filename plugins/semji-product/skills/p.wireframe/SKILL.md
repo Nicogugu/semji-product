@@ -49,6 +49,30 @@ Tu es un Product Designer senior expert en design de SaaS B2B. Tu connais l'app 
 Si `$ARGUMENTS` est fourni, l'utiliser comme description du flow/ecran.
 Sinon, demander : "Quel ecran ou user flow veux-tu wireframer ?"
 
+> **Mode "Product Imagination" — quand le brief est vague ou brut** :
+>
+> Si l'input est un message Slack, une idee brute, un besoin client, ou une description non structuree qui ne precise pas clairement **quel ecran/flow wireframer**, le skill doit **imaginer la fonctionnalite comme un expert Product/UX senior** avant de passer au wireframe.
+>
+> Processus :
+> 1. **Lire le message source** : Si c'est un lien Slack, utiliser `slack_read_thread` ou `slack_read_channel` pour recuperer le contenu complet (message + contexte thread)
+> 2. **Analyser le besoin** : Extraire le probleme utilisateur, le job-to-be-done, et les contraintes implicites
+> 3. **Consulter `semji-product-context.md`** : Identifier dans quel module/hub Semji cette feature s'insere, quelles features existantes sont proches, et quels patterns UX sont deja en place
+> 4. **Imaginer la solution** : En tant qu'expert Product/UX, proposer :
+>    - Le **probleme** resolu (en 1-2 phrases)
+>    - La **solution UX** imaginee (description fonctionnelle)
+>    - Le **user flow** complet (etapes cles)
+>    - Les **ecrans** a wireframer (liste)
+>    - Les **edge cases** principaux
+> 5. **Valider avec le PM** via `AskUserQuestion` avant de generer les wireframes : "Voici ce que j'imagine pour cette feature. Ca correspond a ce que tu as en tete ?"
+>
+> **Exemples de briefs vagues declenchant ce mode** :
+> - Un lien Slack vers une discussion produit
+> - "On voudrait permettre aux users de comparer leurs articles"
+> - Un feedback client brut ("les users galèrent avec X")
+> - Une idee en une phrase ("ajouter un dashboard GEO")
+>
+> L'objectif est de ne JAMAIS bloquer sur un brief vague — la skill doit imaginer, proposer, et iterer rapidement.
+
 > **Depuis une issue existante (workflow `/p.issue` → `/p.wireframe`)** :
 > Quand invoque apres `/p.issue`, le skill peut utiliser les Criteres d'Acceptation de l'issue comme brief. Dans ce cas :
 > - Lire l'issue (via GitLab API ou depuis le contexte de la conversation)
@@ -113,8 +137,8 @@ Pour chaque ecran identifie, generer un wireframe via Nano Banana.
 **IMPORTANT** : Ne PAS utiliser le MCP nano-banana (problemes de compatibilite modele confirmes). Toujours utiliser **directement l'API Gemini** via Python.
 
 **Modele** : `gemini-3-pro-image-preview` (Nano Banana Pro — raisonnement avance, texte haute fidelite)
-**API Key** : Lire depuis `.mcp.json` (champ `nanobanana.env.GEMINI_API_KEY`) ou la variable d'environnement `GEMINI_API_KEY`
-**Prerequis** : `pip install google-genai` (deja installe sur cette machine)
+**API Key** : Lire depuis `/c/claude/semji-mockup-figma/.env` (champ `GEMINI_API_KEY`) ou la variable d'environnement `GEMINI_API_KEY`
+**Prerequis** : `pip install google-genai` (peut ne pas etre installe — lancer `pip install google-genai` si erreur `ModuleNotFoundError`)
 
 **Script Python type (avec image de reference — Option A preferee)** :
 ```python
