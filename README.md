@@ -7,7 +7,7 @@ Plugin Claude Code pour l'equipe Product Semji. 5 skills pour accelerer le workf
 | `/p.feedback [sujet]` | Collecte les feedbacks clients depuis Harvestr et produit une synthese product |
 | `/p.prd [feature]` | Guide une interview PM et genere une EPIC complete sur Notion |
 | `/p.issue [lien-notion]` | Transforme une User Story du PRD en issue dev-ready |
-| `/p.wireframe [description]` | Genere des wireframes a partir des screenshots Semji |
+| `/p.wireframe [description ou lien Slack]` | Genere des wireframes a partir des screenshots Semji. Accepte un brief precis OU un besoin vague (lien Slack, idee brute) — imagine la feature en mode Product/UX avant de wireframer |
 | `/p.gitlab [action]` | Cree, lit, modifie et recherche des issues sur le GitLab Semji |
 
 ---
@@ -86,10 +86,20 @@ Puis taper la commande du skill voulu :
 ```
 
 ### Generer des wireframes
+
+Avec un brief precis :
 ```
 /semji-product:p.wireframe modale d'ajout de prompts GEO depuis le listing
 ```
 
+Avec un besoin vague ou un lien Slack (mode Product Imagination) :
+```
+/semji-product:p.wireframe https://semji.slack.com/archives/C06TQ2H3J78/p1772703414552459
+/semji-product:p.wireframe on voudrait permettre aux users de comparer leurs articles
+```
+
+> En mode Product Imagination, le skill lit le message source, imagine la feature (probleme, solution UX, user flow, ecrans, edge cases), valide avec le PM, puis genere les wireframes.
+>
 > Les wireframes utilisent les screenshots dans le dossier `semji-screenshots/` comme reference visuelle. Ajouter des screenshots de l'app Semji dans ce dossier pour de meilleurs resultats.
 
 ### Gerer les issues GitLab
