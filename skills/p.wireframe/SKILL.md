@@ -228,9 +228,10 @@ Quand le flow comporte **plusieurs ecrans independants**, generer en parallele v
 ### PHASE 4 : Presenter et iterer
 
 1. Afficher chaque wireframe genere avec `Read` pour que le PM le voie dans le chat
-2. Annoter les points cles du flow (texte)
-3. Pour iterer : repasser l'image generee comme reference (Option A) avec un nouveau prompt de modification
-4. Sauvegarder les wireframes finaux dans `semji-screenshots/wireframes/`
+2. **Ouvrir automatiquement** chaque wireframe en plein ecran via `start "" "chemin\vers\image.png"` (Windows) pour que le PM puisse les voir en grand sans effort
+3. Annoter les points cles du flow (texte)
+4. Pour iterer : repasser l'image generee comme reference (Option A) avec un nouveau prompt de modification
+5. Sauvegarder les wireframes finaux dans `semji-screenshots/wireframes/`
 
 ---
 
