@@ -81,30 +81,36 @@ Table : `documents`
 | Colonne | Type | Notes |
 |---------|------|-------|
 | id | bigint | PK |
-| created_at | timestamp with time zone | Date du feedback |
 | content | text | Corps du feedback |
-| label | text | Feature ou module concerne |
-| requester | text | Client ou CSM source |
-| via | text | Canal (intercom, slack, call, email...) |
-| metadata | jsonb[] | Array de jsonb |
+| metadata | jsonb | Contient : `label`, `requester`, `via`, `created_at`, `loc`, `source`, `blobType` |
 | embedding | vector | **Ne JAMAIS selectionner en SQL** — saturerait le contexte |
+
+Les champs utiles sont dans `metadata` (jsonb) :
+- `metadata->>'label'` — Feature ou module concerne
+- `metadata->>'requester'` — Client ou CSM source
+- `metadata->>'via'` — Canal (intercom, slack, call, email...)
+- `metadata->>'created_at'` — Date du feedback (ISO 8601)
 
 **Exemple SQL correct :**
 ```sql
-SELECT id, content, label, requester, via, created_at
+SELECT id, content,
+  metadata->>'label' AS label,
+  metadata->>'requester' AS requester,
+  metadata->>'via' AS via,
+  metadata->>'created_at' AS created_at
 FROM documents
-WHERE label = 'Editor'
-ORDER BY created_at DESC
+WHERE metadata->>'label' = 'Editor'
+ORDER BY (metadata->>'created_at')::timestamp DESC
 LIMIT 20;
 ```
 
-**Labels disponibles :**
+**Labels disponibles** (par volume decroissant) :
 
-Modules plateforme : `Content Hub`, `Editor`, `Content Score`, `Brief AI`, `AI+ Content`, `Atomic Content`, `AI Fact-Checking`, `AI Brand Voice`, `Custom Instructions`, `Content Ideas`, `SERP & Competitor Analysis`, `Incoming Links`, `Outgoing Links`, `Rank Tracking`, `Reports`, `Collaboration & Comments`, `Roles & Workflow`, `Planning`, `Editorial Calendar`, `Chrome Extension`, `Intelligence Hub`, `Opportunity Discovery`, `Competitor Benchmarking`, `Content Gap & Coverage Maps`, `Performance Forensics`, `AI Classifications`, `Custom Topics`, `Competitors`, `GEO`, `AI Agents`
+Principaux : `UX` (162), `AI Agents` (137), `GEO` (117), `AI Brand Voice` (91), `Reports` (86), `Content Score` (86), `Intelligence Hub` (70), `Integrations` (63), `AI+ Content` (55), `Atomic Content` (47), `Editor` (41), `Custom Instructions` (40), `Content Hub` (36), `User & Rights Management` (36), `Incoming Links` (36), `Content Ideas` (34), `Planning` (25), `Competitor` (24), `AI Fact-Checking` (22), `AI Classifications` (20), `Brief AI` (18), `Outgoing Links` (14), `SERP & Competitor Analysis` (14), `Performance Forensics` (13), `Rank Tracking` (11), `Collaboration & Comments` (11), `Content Gap & Coverage Maps` (11), `Opportunity Discovery` (10)
 
-Infrastructure : `User & Rights Management`, `SSO`, `Audit Trails`, `Reporting Integrations`, `Data/CRM/Analytics Attribution`, `Security & Compliance`
+Secondaires : `Knowledge Base`, `Reporting Integrations`, `Competitor Benchmarking`, `Competitors`, `Security/Governance`, `Pages`, `Roles & Workflow`, `Custom Topics`, `Data/CRM/Analytics Attribution`
 
-Meta-labels : `Competitor`, `Integrations`, `Security/Governance`, `UX`
+Note : certains feedbacks ont des labels combines (ex: `Editor / Brief AI`, `AI Brand Voice / Custom Instructions`). Filtrer avec `LIKE` si necessaire.
 
 ---
 
