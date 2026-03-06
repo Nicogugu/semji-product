@@ -1,18 +1,8 @@
 {
   "mcpServers": {
     "harvestr": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        ".harvestr-mcp",
-        "fastmcp",
-        "run",
-        "src/harvestr_mcp/server.py:mcp"
-      ],
-      "env": {
-        "HARVESTR_API_TOKEN": "<your-harvestr-api-token>"
-      }
+      "_comment": "MCP Streamable HTTP — l'URL contient le token d'acces, ne pas committer",
+      "url": "<your-harvestr-n8n-mcp-url>"
     },
     "n8n-feedbacks": {
       "_comment": "MCP Streamable HTTP — l'URL contient le token d'accès, ne pas committer",

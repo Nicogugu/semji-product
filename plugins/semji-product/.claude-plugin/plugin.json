@@ -1,6 +1,6 @@
 {
   "name": "semji-product",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Skills Product Management Semji : feedback analysis (Harvestr MCP + RAG/SQL calls), PRD/EPIC generation (Notion), issue creation (PRD ou description libre), wireframe generation (Gemini), GitLab management (issues + images)",
   "author": {
     "name": "Semji Product Team"

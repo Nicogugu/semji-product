@@ -67,12 +67,11 @@ Enchainement complet pour une feature, de la spec au ticket illustre :
 
 ## Integrations & MCP servers
 
-### Harvestr (MCP local — FastMCP/uv)
-- Serveur dans `.harvestr-mcp/` (gitignore, local uniquement)
-- Outils : `harvestr_list_messages`, `harvestr_get_message`, `harvestr_list_discoveries`, `harvestr_get_discovery`, `harvestr_list_components`, `harvestr_raw_request`
+### Harvestr (MCP Streamable HTTP — n8n cloud)
+- Endpoint URL dans `.mcp.json` (gitignore) — l'URL fait office de token
+- Outils : `List_Messages`, `Get_Message`, `List_Discoveries`, `Get_Discovery`, `List_Components`, `Raw_Request`
 - Supporte filtres date : `created_after`, `created_before`, `updated_after`, `updated_before`
 - Supporte filtres : `channel`, `requester_id`, `has_feedback`
-- Token dans `.mcp.json` (gitignore), env var `HARVESTR_API_TOKEN`
 - Feedbacks qualitatifs valides par le Product via #feedback-semji
 
 ### n8n-feedbacks (MCP Streamable HTTP — n8n cloud)
@@ -103,12 +102,9 @@ git clone https://github.com/Nicogugu/semji-product
 
 # 2. Configurer les secrets
 cp .mcp.json.example .mcp.json
-# Editer .mcp.json : remplir HARVESTR_API_TOKEN et l'URL n8n-feedbacks
+# Editer .mcp.json : remplir les URLs Harvestr et n8n-feedbacks (demander a Nico)
 
-# 3. Installer le MCP Harvestr (local)
-cd .harvestr-mcp && uv sync && cd ..
-
-# 4. Lancer Claude Code depuis le repo
+# 3. Lancer Claude Code depuis le repo
 claude
 ```
 
@@ -117,4 +113,3 @@ claude
 - Branche de dev : `feature/feedback-mcp-rag`
 - Git user : Romain Dechamps <rom.dechamps@gmail.com>
 - `.mcp.json` est gitignore (secrets)
-- `.harvestr-mcp/` est gitignore (clone local du serveur MCP)
