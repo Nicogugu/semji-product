@@ -1,9 +1,10 @@
 # Semji Product Tools
 
-Plugin Claude Code pour l'equipe Product Semji. 5 skills pour accelerer le workflow PM :
+Plugin Claude Code pour l'equipe Product Semji. 6 skills pour accelerer le workflow PM :
 
 | Skill | Ce que ca fait |
 |-------|---------------|
+| **`/p.bar2prod [idee]`** | **Pipeline complet : idee brute → prototype interactif.** Enchaine Discovery, PRD Light, UX Design et Implementation en une seule session. |
 | `/p.feedback [sujet]` | Analyse les feedbacks depuis Harvestr (qualitatif) et la base de calls (RAG/SQL). Produit une synthese structuree des problemes. |
 | `/p.prd [feature]` | Guide une interview PM et genere une EPIC complete sur Notion |
 | `/p.issue [lien-notion]` | Transforme une User Story du PRD en issue dev-ready |
@@ -68,6 +69,14 @@ claude
 
 Puis taper la commande du skill voulu :
 
+### Du bar napkin au prototype (pipeline complet)
+```
+/semji-product:p.bar2prod brief de contenu
+/semji-product:p.bar2prod les users galèrent avec l'onboarding
+/semji-product:p.bar2prod https://semji.slack.com/archives/C123/p456
+```
+> Enchaine automatiquement : analyse feedbacks → PRD light (max 1-3 questions) → audit UX → implementation prototype React. Le PM valide a chaque gate. Chaque phase peut etre sautee.
+
 ### Analyser les feedbacks
 ```
 /semji-product:p.feedback content score
@@ -111,8 +120,14 @@ Avec un besoin vague ou un lien Slack (mode Product Imagination) :
 
 ---
 
-## Workflow type
+## Workflows
 
+### Pipeline rapide (recommande)
+```
+/p.bar2prod [idee]  →  Discovery + PRD Light + UX Design + Prototype en 1 session
+```
+
+### Pipeline detaille (skills individuelles)
 ```
 /p.feedback [sujet]     →  comprendre les besoins clients
         ↓
