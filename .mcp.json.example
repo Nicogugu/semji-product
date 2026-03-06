@@ -11,8 +11,12 @@
         "src/harvestr_mcp/server.py:mcp"
       ],
       "env": {
-        "HARVESTR_API_TOKEN": "<your-harvestr-token>"
+        "HARVESTR_API_TOKEN": "<your-harvestr-api-token>"
       }
+    },
+    "n8n-feedbacks": {
+      "_comment": "MCP Streamable HTTP — l'URL contient le token d'accès, ne pas committer",
+      "url": "<your-n8n-mcp-endpoint-url>"
     },
     "slack": {
       "command": "npx",

@@ -4,7 +4,7 @@ Plugin Claude Code pour l'equipe Product Semji. 5 skills pour accelerer le workf
 
 | Skill | Ce que ca fait |
 |-------|---------------|
-| `/p.feedback [sujet]` | Collecte les feedbacks clients depuis Harvestr et produit une synthese product |
+| `/p.feedback [sujet]` | Analyse les feedbacks depuis Harvestr (qualitatif) et la base de calls (RAG/SQL). Produit une synthese structuree des problemes. |
 | `/p.prd [feature]` | Guide une interview PM et genere une EPIC complete sur Notion |
 | `/p.issue [lien-notion]` | Transforme une User Story du PRD en issue dev-ready |
 | `/p.wireframe [description ou lien Slack]` | Genere des wireframes a partir des screenshots Semji. Accepte un brief precis OU un besoin vague (lien Slack, idee brute) — imagine la feature en mode Product/UX avant de wireframer |
@@ -14,47 +14,64 @@ Plugin Claude Code pour l'equipe Product Semji. 5 skills pour accelerer le workf
 
 ## Installation
 
-### 1. Installer Claude Code
+### 1. Prerequis
 
-Si ce n'est pas deja fait, installer Claude Code : https://docs.anthropic.com/en/docs/claude-code/overview
+- **Claude Code** : https://docs.anthropic.com/en/docs/claude-code/overview
+- **Python 3.10+** : necessaire pour le MCP Harvestr
+- **uv** (gestionnaire de packages Python) : `pip install uv`
 
-Verifier que ca marche :
-```
+Verifier :
+```bash
 claude --version
+python --version
+uv --version
 ```
 
 ### 2. Ajouter le plugin
 
-Ouvrir un terminal et lancer ces 2 commandes :
-
-```
+```bash
 claude marketplace add https://github.com/Nicogugu/semji-product.git
 claude plugin install semji-product
 ```
 
-### 3. Configurer les tokens
+### 3. Installer le MCP Harvestr (local)
 
-Le plugin a besoin de 3 cles API pour fonctionner. Elles ne sont pas dans le repo (securite).
+Le MCP Harvestr tourne en local sur ta machine. A la racine du projet :
+
+```bash
+# Cloner le serveur MCP (si pas deja fait)
+# Le dossier .harvestr-mcp/ est gitignore — demander les sources a Nico
+
+# Installer les dependances
+cd .harvestr-mcp
+uv sync
+cd ..
+```
+
+### 4. Configurer les secrets
+
+Le plugin utilise plusieurs services qui necessitent des tokens. Aucun secret n'est commite dans le repo.
 
 **Etape 1** : Copier le fichier exemple
-
-Dans le dossier ou tu travailles avec Claude Code, copier `.mcp.json.example` en `.mcp.json` :
-```
+```bash
 cp .mcp.json.example .mcp.json
 ```
 
 **Etape 2** : Remplir les tokens dans `.mcp.json`
 
-Ouvrir `.mcp.json` avec un editeur de texte et remplacer :
+| Champ | Ou le trouver | Utilise par |
+|-------|--------------|-------------|
+| `HARVESTR_API_TOKEN` | Demander a Nico | `/p.feedback` (feedbacks qualitatifs) |
+| URL `n8n-feedbacks` | Demander a Nico | `/p.feedback` (feedbacks calls RAG/SQL) |
+| `GEMINI_API_KEY` | https://aistudio.google.com/apikey | `/p.wireframe` |
+| `GITLAB_TOKEN` | https://gitlab.rvip.fr/-/user_settings/personal_access_tokens (scope `api`) | `/p.gitlab` |
 
-- `<your-harvestr-token>` → demander le token a Nico
-- `<your-gemini-api-key>` → demander la cle a Nico (ou en creer une sur https://aistudio.google.com/apikey)
-- `<your-gitlab-personal-access-token>` → creer un token sur https://gitlab.rvip.fr/-/user_settings/personal_access_tokens (scope `api`)
+> **Important** : Le fichier `.mcp.json` contient des secrets. Ne jamais le commiter (il est dans `.gitignore`).
 
-### 4. Installer la dependance Python (wireframes uniquement)
+### 5. Dependance Python (wireframes uniquement)
 
-Necessaire uniquement si tu utilises `/p.wireframe` :
-```
+Necessaire uniquement pour `/p.wireframe` :
+```bash
 pip install google-genai
 ```
 
@@ -69,11 +86,12 @@ claude
 
 Puis taper la commande du skill voulu :
 
-### Collecter des feedbacks
+### Analyser les feedbacks
 ```
-/semji-product:p.feedback webhooks
 /semji-product:p.feedback content score
+/semji-product:p.feedback GEO
 ```
+> Combine automatiquement les feedbacks Harvestr (valides Product) et les feedbacks de calls (volume RAG/SQL).
 
 ### Creer un PRD
 ```
@@ -107,7 +125,6 @@ Avec un besoin vague ou un lien Slack (mode Product Imagination) :
 /semji-product:p.gitlab chercher les issues Bug ouvertes
 /semji-product:p.gitlab lire #11529
 /semji-product:p.gitlab creer une issue pour le bug du lien casse
-/semji-product:p.gitlab modifier #11550 — passer en P2
 ```
 
 ---
@@ -128,19 +145,38 @@ Avec un besoin vague ou un lien Slack (mode Product Imagination) :
 
 ---
 
+## Architecture MCP
+
+Le plugin `/p.feedback` utilise 2 sources de donnees via MCP :
+
+| Source | Type | Donnees | Config |
+|--------|------|---------|--------|
+| **Harvestr** | MCP local (FastMCP/uv) | Feedbacks qualitatifs valides par le Product via #feedback-semji | Token API dans `.mcp.json` |
+| **n8n-feedbacks** | MCP Streamable HTTP | Feedbacks extraits des calls clients (RAG + SQL sur Supabase) | URL endpoint dans `.mcp.json` |
+
+Pour plus de details techniques : voir `docs/technique.md`.
+
+---
+
 ## FAQ
 
-**Je n'ai pas le bon token Harvestr**
-→ Demander a Nico. Le token est celui de l'app privee Harvestr.
+**Claude ne trouve pas le plugin**
+→ Relancer Claude Code apres l'installation : fermer et rouvrir le terminal.
+
+**"uv: command not found"**
+→ Installer uv : `pip install uv`, puis relancer le terminal.
+
+**Les feedbacks Harvestr ne remontent pas**
+→ Verifier que le token Harvestr est bien dans `.mcp.json` et que `uv sync` a ete fait dans `.harvestr-mcp/`.
+
+**Les feedbacks RAG/SQL ne fonctionnent pas**
+→ Verifier que l'URL n8n-feedbacks est bien renseignee dans `.mcp.json`. L'URL fait office de token d'acces.
 
 **Les wireframes ne se generent pas**
 → Verifier que `pip install google-genai` est fait et que la cle Gemini est dans `.mcp.json`.
 
 **Les commandes GitLab ne marchent pas**
-→ Verifier que le token GitLab est bien dans `.mcp.json` et qu'il a le scope `api`. Le creer ici : https://gitlab.rvip.fr/-/user_settings/personal_access_tokens
-
-**Claude ne trouve pas le plugin**
-→ Relancer Claude Code apres l'installation : fermer et rouvrir le terminal.
+→ Verifier que le token GitLab est bien dans `.mcp.json` et qu'il a le scope `api`.
 
 **Je veux utiliser le plugin dans un autre projet**
-→ Le plugin est installe globalement. Il suffit de copier `.mcp.json` dans le nouveau projet et d'ajouter un dossier `semji-screenshots/` avec des captures de l'app.
+→ Le plugin est installe globalement. Copier `.mcp.json` dans le nouveau projet et ajouter un dossier `semji-screenshots/` avec des captures de l'app.

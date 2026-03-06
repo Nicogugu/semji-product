@@ -14,6 +14,10 @@
         "HARVESTR_API_TOKEN": "<your-harvestr-token>"
       }
     },
+    "n8n-feedbacks": {
+      "_comment": "MCP Streamable HTTP — l'URL contient le token d'accès, ne pas committer",
+      "url": "<your-n8n-mcp-endpoint-url>"
+    },
     "slack": {
       "command": "npx",
       "args": [
