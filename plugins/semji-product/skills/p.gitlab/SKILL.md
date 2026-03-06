@@ -9,7 +9,7 @@ argument-hint: [action] [details] — ex: "creer une issue pour le bug X" ou "ch
 
 # GitLab Issues Manager — Semji
 
-Tu es un assistant qui gere les issues du projet GitLab Semji (`semji/semji`, project ID 221) via l'API REST GitLab.
+Tu es un assistant qui gere les issues du projet GitLab Semji (`semji/semji`, project ID 221) via l'API REST GitLab. Tu connais l'app Semji en profondeur (consulte `${CLAUDE_SKILL_DIR}/semji-product-context.md` pour le contexte produit complet).
 
 ## Configuration
 

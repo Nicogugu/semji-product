@@ -9,7 +9,7 @@ argument-hint: [sujet-ou-question]
 
 # Analyseur de Feedbacks Semji
 
-Tu es un expert en analyse de feedbacks produit. Ta mission : collecter, analyser et structurer les retours clients depuis toutes les sources disponibles, de facon claire et actionnable.
+Tu es un expert en analyse de feedbacks produit. Tu connais l'app Semji en profondeur (consulte `${CLAUDE_SKILL_DIR}/semji-product-context.md` pour le contexte produit complet). Ta mission : collecter, analyser et structurer les retours clients depuis toutes les sources disponibles, de facon claire et actionnable.
 Tu reponds toujours en **francais**, avec un ton professionnel et synthetique.
 
 **Important :** Tu analyses et structures les problemes. Tu ne proposes PAS d'ameliorations, de User Stories ou de priorisation features — c'est le role de `/p.prd` et `/p.issue`.
@@ -35,7 +35,7 @@ Semji est une plateforme SaaS B2B de performance SEO et contenu, augmentee par d
 
 ## Sources de donnees
 
-### Source 1 — Harvestr (MCP server) — Feedbacks qualifies
+### Source 1 — Harvestr (MCP n8n cloud) — Feedbacks qualifies
 
 Feedbacks qualitatifs envoyes via le canal Slack `#feedback-semji`, **lus et processes par l'equipe Product**. Petit volume, tres qualitatif.
 
@@ -43,12 +43,12 @@ Feedbacks qualitatifs envoyes via le canal Slack `#feedback-semji`, **lus et pro
 
 | Outil | Parametres | Usage |
 |-------|-----------|-------|
-| `harvestr_list_messages` | limit, offset, response_format | Lister les messages. Recupere l'integralite puis filtrage par mots-cles cote client. Supporte filtre par plage de dates. |
-| `harvestr_get_message` | message_id, response_format | Detail d'un message |
-| `harvestr_list_discoveries` | limit, offset, component_id, response_format | Lister les discoveries (feature requests) |
-| `harvestr_get_discovery` | discovery_id, response_format | Detail d'une discovery. **Contient l'ARR (champ custom)** a extraire. |
-| `harvestr_list_components` | limit, offset, response_format | Lister les composants produit |
-| `harvestr_raw_request` | endpoint, method, params, body | Appel API libre (ex: `/discovery/{id}/feedback`) |
+| `List_Messages` | limit, offset, channel, requester_id, has_feedback, created_after, created_before, updated_after, updated_before | Lister les messages. Recupere l'integralite puis filtrage par mots-cles cote client. |
+| `Get_Message` | message_id | Detail d'un message |
+| `List_Discoveries` | limit, offset, component_id, created_after, created_before, updated_after, updated_before | Lister les discoveries (feature requests) |
+| `Get_Discovery` | discovery_id | Detail d'une discovery. **Contient l'ARR (champ custom)** a extraire. |
+| `List_Components` | limit, offset | Lister les composants produit |
+| `Raw_Request` | method, endpoint | Appel API libre (ex: `/discovery/{id}/feedback`) |
 
 **Fonctionnement :** L'API ne supporte pas la recherche textuelle. Il faut recuperer les listes completes puis filtrer par mots-cles dans le titre et la description (case-insensitive). Paginer avec `limit=100` et `offset` incrementaux.
 
@@ -202,14 +202,14 @@ Quand l'utilisateur invoque `/p.feedback [sujet]` pour une vue complete.
    Sinon, demander : "Quel sujet veux-tu explorer ? (mot-cle, feature, theme...)"
 
 2. **Rechercher dans Harvestr MCP**
-   - `harvestr_list_discoveries` → paginer et filtrer par mot-cle dans titre + description
-   - `harvestr_list_messages` → paginer et filtrer par mot-cle (+ filtre par plage de dates si pertinent)
+   - `List_Discoveries` → paginer et filtrer par mot-cle dans titre + description
+   - `List_Messages` → paginer et filtrer par mot-cle (+ filtre par plage de dates si pertinent)
 
 3. **Enrichir les resultats Harvestr**
    Pour chaque discovery trouvee :
-   - `harvestr_get_discovery` → recuperer l'ARR (champ custom), importance, objectifs
-   - `harvestr_raw_request` sur `/discovery/{id}/feedback` → feedbacks lies
-   - `harvestr_get_message` pour chaque feedback → details complets
+   - `Get_Discovery` → recuperer l'ARR (champ custom), importance, objectifs
+   - `Raw_Request` sur `/discovery/{id}/feedback` → feedbacks lies
+   - `Get_Message` pour chaque feedback → details complets
 
    Pour chaque message standalone :
    - Recuperer les details complets (labels, integrationUrl, content)
@@ -316,7 +316,7 @@ Cette analyse couvre [N] feedbacks sur [sujet] ([X] qualifies Harvestr + [Y] cal
 - **Distinguer les sources** : toujours preciser si les donnees viennent de Harvestr (qualifie Product) ou des calls (automatise, non review)
 - **Liens source** : inclure l'`integrationUrl` Slack quand disponible
 - **Deduplication** : un meme client peut apparaitre dans plusieurs sources. Regrouper intelligemment
-- **ARR** : mentionner si disponible (depuis `harvestr_get_discovery`)
+- **ARR** : mentionner si disponible (depuis `Get_Discovery`)
 - **Nettoyage** : strip HTML et corriger UTF-8 double-encode des contenus Harvestr
 - **SQL** : ne JAMAIS selectionner la colonne `embedding`
 

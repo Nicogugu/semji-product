@@ -17,14 +17,10 @@ Plugin Claude Code pour l'equipe Product Semji. 5 skills pour accelerer le workf
 ### 1. Prerequis
 
 - **Claude Code** : https://docs.anthropic.com/en/docs/claude-code/overview
-- **Python 3.10+** : necessaire pour le MCP Harvestr
-- **uv** (gestionnaire de packages Python) : `pip install uv`
 
 Verifier :
 ```bash
 claude --version
-python --version
-uv --version
 ```
 
 ### 2. Ajouter le plugin
@@ -34,21 +30,7 @@ claude marketplace add https://github.com/Nicogugu/semji-product.git
 claude plugin install semji-product
 ```
 
-### 3. Installer le MCP Harvestr (local)
-
-Le MCP Harvestr tourne en local sur ta machine. A la racine du projet :
-
-```bash
-# Cloner le serveur MCP (si pas deja fait)
-# Le dossier .harvestr-mcp/ est gitignore — demander les sources a Nico
-
-# Installer les dependances
-cd .harvestr-mcp
-uv sync
-cd ..
-```
-
-### 4. Configurer les secrets
+### 3. Configurer les secrets
 
 Le plugin utilise plusieurs services qui necessitent des tokens. Aucun secret n'est commite dans le repo.
 
@@ -61,14 +43,14 @@ cp .mcp.json.example .mcp.json
 
 | Champ | Ou le trouver | Utilise par |
 |-------|--------------|-------------|
-| `HARVESTR_API_TOKEN` | Demander a Nico | `/p.feedback` (feedbacks qualitatifs) |
+| URL `harvestr` | Demander a Nico | `/p.feedback` (feedbacks qualitatifs Harvestr) |
 | URL `n8n-feedbacks` | Demander a Nico | `/p.feedback` (feedbacks calls RAG/SQL) |
 | `GEMINI_API_KEY` | https://aistudio.google.com/apikey | `/p.wireframe` |
 | `GITLAB_TOKEN` | https://gitlab.rvip.fr/-/user_settings/personal_access_tokens (scope `api`) | `/p.gitlab` |
 
 > **Important** : Le fichier `.mcp.json` contient des secrets. Ne jamais le commiter (il est dans `.gitignore`).
 
-### 5. Dependance Python (wireframes uniquement)
+### 4. Dependance Python (wireframes uniquement)
 
 Necessaire uniquement pour `/p.wireframe` :
 ```bash
@@ -141,8 +123,8 @@ Le plugin `/p.feedback` utilise 2 sources de donnees via MCP :
 
 | Source | Type | Donnees | Config |
 |--------|------|---------|--------|
-| **Harvestr** | MCP local (FastMCP/uv) | Feedbacks qualitatifs valides par le Product via #feedback-semji | Token API dans `.mcp.json` |
-| **n8n-feedbacks** | MCP Streamable HTTP | Feedbacks extraits des calls clients (RAG + SQL sur Supabase) | URL endpoint dans `.mcp.json` |
+| **Harvestr** | MCP Streamable HTTP (n8n cloud) | Feedbacks qualitatifs valides par le Product via #feedback-semji | URL endpoint dans `.mcp.json` |
+| **n8n-feedbacks** | MCP Streamable HTTP (n8n cloud) | Feedbacks extraits des calls clients (RAG + SQL sur Supabase) | URL endpoint dans `.mcp.json` |
 
 Pour plus de details techniques : voir `docs/technique.md`.
 
@@ -153,11 +135,8 @@ Pour plus de details techniques : voir `docs/technique.md`.
 **Claude ne trouve pas le plugin**
 → Relancer Claude Code apres l'installation : fermer et rouvrir le terminal.
 
-**"uv: command not found"**
-→ Installer uv : `pip install uv`, puis relancer le terminal.
-
 **Les feedbacks Harvestr ne remontent pas**
-→ Verifier que le token Harvestr est bien dans `.mcp.json` et que `uv sync` a ete fait dans `.harvestr-mcp/`.
+→ Verifier que l'URL Harvestr est bien renseignee dans `.mcp.json`. L'URL fait office de token d'acces.
 
 **Les feedbacks RAG/SQL ne fonctionnent pas**
 → Verifier que l'URL n8n-feedbacks est bien renseignee dans `.mcp.json`. L'URL fait office de token d'acces.

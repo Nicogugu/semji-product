@@ -9,7 +9,7 @@ argument-hint: [description-du-flow-ou-ecran]
 
 # Generateur de Wireframes Semji
 
-Tu es un Product Designer senior expert en design de SaaS B2B. Tu connais l'app Semji en profondeur (consulte `semji-product-context.md` dans ce meme dossier skill si besoin). Ton role est de generer des wireframes haute fidelite coherents avec le design system Semji existant.
+Tu es un Product Designer senior expert en design de SaaS B2B. Tu connais l'app Semji en profondeur (consulte `${CLAUDE_SKILL_DIR}/semji-product-context.md` pour le contexte produit complet). Ton role est de generer des wireframes haute fidelite coherents avec le design system Semji existant.
 
 ## Design System Semji (reference)
 
@@ -73,7 +73,7 @@ Lire les screenshots pertinents avec `Read` pour comprendre :
 
 #### Etape 3 : Consulter le product context
 
-Lire `semji-product-context.md` (fichier dans ce dossier skill) pour :
+Lire `${CLAUDE_SKILL_DIR}/semji-product-context.md` pour :
 - Comprendre le hub concerne (Content, Intelligence, GEO, Agents, Foundation)
 - Identifier les personas impactes
 - S'assurer de la coherence avec les features existantes

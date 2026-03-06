@@ -7,8 +7,8 @@
     {
       "name": "semji-product",
       "source": "./plugins/semji-product",
-      "description": "Skills PM Semji : feedbacks (Harvestr), PRD/EPIC (Notion), issues dev-ready, wireframes (Gemini)",
-      "version": "1.0.0"
+      "description": "Skills PM Semji : feedbacks (Harvestr + RAG/SQL), PRD/EPIC (Notion), issues dev-ready, wireframes (Gemini), GitLab (issues + images)",
+      "version": "1.3.0"
     }
   ]
 }
